@@ -1,35 +1,25 @@
-import { Component } from 'react';
+import { useEffect, useState } from 'react';
 import { PhonebookForm } from './PhonebookForm/PhonebookForm';
 import { ContactList } from './ContactList/ContactList';
 import { nanoid } from 'nanoid';
 import { TitleH2 } from './App.styled';
 import { Filter } from './Filter/Filter';
-export class App extends Component {
-  state = {
-    contacts: [],
-    filter: '',
+export const App = () => {
+  const [contacts, setContacts] = useState(
+    JSON.parse(localStorage.getItem('contacts')) ?? []
+  );
+  const [filterContacts, setFilterContacs] = useState('');
+
+  useEffect(() => {
+    localStorage.setItem('contacts', JSON.stringify(contacts));
+  }, [contacts]);
+
+  const onRemoveContact = contactId => {
+    setContacts(contacts.filter(contact => contact.id !== contactId));
   };
 
-  componentDidMount(prevProps, prevState) {
-    const stringifiedContacts = localStorage.getItem('contacts');
-    const contacts = JSON.parse(stringifiedContacts) ?? [];
-
-    this.setState({ contacts });
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.contacts !== prevState.contacts)
-      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-  }
-
-  onRemoveContact = contactId => {
-    this.setState({
-      contacts: this.state.contacts.filter(contact => contact.id !== contactId),
-    });
-  };
-
-  onAddContact = contactData => {
-    const isInContacts = this.state.contacts.some(
+  const onAddContact = contactData => {
+    const isInContacts = contacts.some(
       ({ name }) => name.toLowerCase() === contactData.name.toLowerCase()
     );
 
@@ -43,19 +33,17 @@ export class App extends Component {
       ...contactData,
     };
 
-    this.setState({
-      contacts: [...this.state.contacts, finalContact],
-    });
+    setContacts([...contacts, finalContact]);
   };
 
-  onChangeFilter = event => {
-    this.setState({ filter: event.target.value });
+  const onChangeFilter = event => {
+    setFilterContacs(event.target.value);
   };
 
-  onFilteredContacts = () => {
-    const { filter, contacts } = this.state;
+  const onFilteredContacts = () => {
+    // const { filter, contacts } = state;
 
-    const normalFilter = filter.toLowerCase();
+    const normalFilter = filterContacts.toLowerCase();
 
     return contacts.filter(contact =>
       contact.name.toLowerCase().includes(normalFilter)
@@ -64,39 +52,37 @@ export class App extends Component {
 
   //
 
-  render() {
-    // const currentLocal = JSON.parse(localStorage.getItem('contacts'));
+  // const currentLocal = JSON.parse(localStorage.getItem('contacts'));
 
-    const filteredContacts = this.onFilteredContacts();
-    const { filter } = this.state;
-    return (
-      <div
-        style={{
-          height: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          fontSize: 40,
-          color: '#010101',
-          paddingTop: 50,
-        }}
-      >
-        <PhonebookForm
-          title="Phonebook"
-          onAddContact={this.onAddContact}
-        ></PhonebookForm>
-        <TitleH2>Contacts</TitleH2>
+  const filteredContacts = onFilteredContacts();
+  // const { filter } = state;
+  return (
+    <div
+      style={{
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        fontSize: 40,
+        color: '#010101',
+        paddingTop: 50,
+      }}
+    >
+      <PhonebookForm
+        title="Phonebook"
+        onAddContact={onAddContact}
+      ></PhonebookForm>
+      <TitleH2>Contacts</TitleH2>
 
-        {this.state.contacts.length > 0 && (
-          <>
-            <Filter value={filter} onChangeFilter={this.onChangeFilter} />
-            <ContactList
-              onRemoveContact={this.onRemoveContact}
-              filteredContacts={filteredContacts}
-            />
-          </>
-        )}
-      </div>
-    );
-  }
-}
+      {contacts.length > 0 && (
+        <>
+          <Filter value={filterContacts} onChangeFilter={onChangeFilter} />
+          <ContactList
+            onRemoveContact={onRemoveContact}
+            filteredContacts={filteredContacts}
+          />
+        </>
+      )}
+    </div>
+  );
+};

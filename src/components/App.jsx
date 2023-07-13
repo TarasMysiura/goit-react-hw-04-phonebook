@@ -41,8 +41,6 @@ export const App = () => {
   };
 
   const onFilteredContacts = () => {
-    // const { filter, contacts } = state;
-
     const normalFilter = filterContacts.toLowerCase();
 
     return contacts.filter(contact =>
@@ -50,12 +48,7 @@ export const App = () => {
     );
   };
 
-  //
-
-  // const currentLocal = JSON.parse(localStorage.getItem('contacts'));
-
   const filteredContacts = onFilteredContacts();
-  // const { filter } = state;
   return (
     <div
       style={{

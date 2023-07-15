@@ -15,10 +15,15 @@ export const PhonebookForm = ({ title, onAddContact }) => {
 
   const handleInputChange = event => {
     const { name, value } = event.currentTarget;
-    if (name === 'name') {
-      setName(value);
-    } else if (name === 'number') {
-      setNumber(value);
+    switch (name) {
+      case 'name':
+        setName(value);
+        break;
+      case 'number':
+        setNumber(value);
+        break;
+      default:
+        break;
     }
   };
 

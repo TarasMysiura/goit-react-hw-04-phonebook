@@ -5,9 +5,12 @@ import { nanoid } from 'nanoid';
 import { TitleH2 } from './App.styled';
 import { Filter } from './Filter/Filter';
 export const App = () => {
-  const [contacts, setContacts] = useState(
-    JSON.parse(localStorage.getItem('contacts')) ?? []
-  );
+  const [contacts, setContacts] = useState(addContactWithLocalStorage ?? []);
+  
+  function addContactWithLocalStorage() {
+    return JSON.parse(localStorage.getItem('contacts'));
+  }
+
   const [filterContacts, setFilterContacs] = useState('');
 
   useEffect(() => {
